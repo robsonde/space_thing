@@ -2,23 +2,29 @@
 #include <GL/glut.h>
 #include <GL/gl.h>
 
-
-
 void init (void)
-{}
-
+{
+glClearColor(0,0,0,0);
+}
 
 void display (void)
-{}
+{
+glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT );
+glutSwapBuffers ();
+}
 
 void reshape (int Width,int Height)
 {
 glViewport (0,0,Width,Height);
 }
 
-
 void tick (void)
-{}
+{
+
+
+
+glutPostRedisplay();
+}
 
 
 
