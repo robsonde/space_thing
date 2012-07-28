@@ -4,12 +4,6 @@
 
 
 
-
-
-
-
-
-
 struct location 
 {
 int x;
@@ -48,6 +42,18 @@ struct econ cargo [num_cargo_types];
 int num_cargo;
 };
 
+
+
+
+
+
+
+struct player
+{
+char const * name;
+int cash;
+struct space_ship * ship;
+};
 
 
 

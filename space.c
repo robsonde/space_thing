@@ -29,10 +29,27 @@ struct cargo cargo_types[]={
 
 
 
-
 struct space_ship ship={
 .name = "Dragon",
 };
+
+
+
+
+struct player player={
+.name="the dude",
+.cash=1000,
+.ship=&ship,
+};
+
+
+
+
+void print_player(struct player * p)
+{
+printf("%s\n",p->name);
+printf("%d\n",p->cash);
+}
 
 
 
@@ -55,25 +72,27 @@ void print_planet (struct planet * p)
 printf("%s\n",p->name);
 for (int i=0;i<num_cargo_types;i++)
 {
-printf("%s:%d\n",cargo_types[i].name,p->cargo_types[i].avil);  
+printf("%s:%d:price:%d\n",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);  
 }  
 }
 
 
 
 
-void buy_cargo ( struct space_ship * s , struct planet * p,int c, int q  ){
+void buy_cargo ( struct player * dude , struct planet * p,int c, int q  ){
 p->cargo_types[c].avil-=q;
-s->cargo[c].avil+=q;
+dude->cash-=q*p->cargo_types[c].price;
+dude->ship->cargo[c].avil+=q;
 }
 
 
 
 
 
-void sell_cargo ( struct space_ship * s , struct planet * p,int c, int q  ){
+void sell_cargo ( struct player * dude , struct planet * p,int c, int q  ){
 p->cargo_types[c].avil+=q; 
-s->cargo[c].avil-=q;
+dude->cash+=q*p->cargo_types[c].price;
+dude->ship->cargo[c].avil-=q;
 }
 
 
@@ -113,20 +132,23 @@ int main (void)
 print_planet(&planets[0]);
 print_planet(&planets[1]);
 print_ship(&ship);
+print_player(&player);
 printf("-------------------\n");
 
-buy_cargo(&ship,&planets[0],0,7);
+buy_cargo(&player,&planets[0],0,7);
 
 print_planet(&planets[0]);
 print_planet(&planets[1]);
 print_ship(&ship);
+print_player(&player);
 printf("-------------------\n");
 
-sell_cargo(&ship,&planets[1],0,7);
+sell_cargo(&player,&planets[1],0,7);
 
 print_planet(&planets[0]);
 print_planet(&planets[1]);
 print_ship(&ship);
+print_player(&player);
 printf("-------------------\n");
 
 return 0;
