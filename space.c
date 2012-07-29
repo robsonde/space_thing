@@ -94,20 +94,31 @@ printf("%s:%d:price:%d\n",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_ty
 
 
 
-void buy_cargo ( struct player * dude , struct planet * p,int c, int q  ){
-p->cargo_types[c].avil-=q;
-dude->cash-=q*p->cargo_types[c].price;
-dude->ship->cargo[c].avil+=q;
+int buy_cargo ( struct player * dude , struct planet * p,int c, int q  ){
+	int cost=q*p->cargo_types[c].price;
+	if (cost<=dude->cash)
+	{
+		p->cargo_types[c].avil-=q;
+		dude->cash-=cost;
+		dude->ship->cargo[c].avil+=q;
+		return 0;
+	}	
+	return 1;
 }
 
 
 
 
 
-void sell_cargo ( struct player * dude , struct planet * p,int c, int q  ){
-p->cargo_types[c].avil+=q; 
-dude->cash+=q*p->cargo_types[c].price;
-dude->ship->cargo[c].avil-=q;
+int sell_cargo ( struct player * dude , struct planet * p,int c, int q  ){
+	if (q<=dude->ship->cargo[c].avil)
+	{
+		p->cargo_types[c].avil+=q; 
+		dude->cash+=q*p->cargo_types[c].price;
+		dude->ship->cargo[c].avil-=q;
+		return 0;
+	}
+	return 1;
 }
 
 
@@ -150,7 +161,7 @@ print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
 
-buy_cargo(&player,&planets[0],0,7);
+buy_cargo(&player,&planets[0],0,17);
 
 print_planet(&planets[0]);
 print_planet(&planets[1]);
