@@ -16,7 +16,16 @@ struct planet planets[]={
 .cargo_types={ {.price=175,.avil=5} }, 
 },
 
+{
+.name="flarg",
+.notes="planet flarg",
+.cargo_types={ {.price=125,.avil=0} },
+},
+
 };
+
+
+
 
 
 
@@ -25,6 +34,12 @@ struct cargo cargo_types[]={
 .base_price=50,
 .contraband=0,
 },
+
+{.name="food",
+.base_price=100,
+.contraband=0,
+},
+
 };
 
 

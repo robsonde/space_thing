@@ -1,6 +1,6 @@
 #pragma once
 
-#define num_cargo_types 1
+#define num_cargo_types 2
 
 
 
