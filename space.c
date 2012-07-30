@@ -3,6 +3,10 @@
 #include <GL/gl.h>
 #include "space.h"
 
+#define NO_SPACE 1
+#define NO_CASH 2
+#define NOT_AVIL 3
+
 
 
 //setup of the planets.
@@ -54,6 +58,8 @@ struct space_ship ship={
 .name = "Dragon",
 .cap=14,
 };
+
+
 
 
 
@@ -114,34 +120,38 @@ printf("\n");
 
 
 
-//function for buying cargo fro a planet. 
-int buy_cargo ( struct player * dude , struct planet * p,int c, int q  ){
-	int cost=q*p->cargo_types[c].price;
-	if (cost<=dude->cash)
-	{
-		p->cargo_types[c].avil-=q;
-		dude->cash-=cost;
-		dude->ship->cargo[c].avil+=q;
-		dude->ship->cap-=q;
-		return 0;
-	}	
-	return 1;
+//function for buying cargo from a planet. 
+int buy_cargo ( struct player * dude , struct planet * planet,int cargo_index, int count ){
+	int cost = count*planet->cargo_types[cargo_index].price;
+
+	//checking if we have cash and space for this trade.
+	if ( dude->ship->cap < count ) return NO_SPACE;
+	if ( dude->cash < cost ) return NO_CASH;
+	if ( planet->cargo_types[cargo_index].avil < count ) return NOT_AVIL;
+
+	//all looks good so we do the trade.
+	planet->cargo_types[cargo_index].avil -= count;
+	dude->cash -= cost;
+	dude->ship->cargo[cargo_index].avil += count;
+	dude->ship->cap -= count;
+	return 0;
 }
 
 
 
 
 //function for selling cargo to a planet.
-int sell_cargo ( struct player * dude , struct planet * p,int c, int q  ){
-	if (q<=dude->ship->cargo[c].avil)
-	{
-		p->cargo_types[c].avil+=q; 
-		dude->cash+=q*p->cargo_types[c].price;
-		dude->ship->cargo[c].avil-=q;
-		dude->ship->cap+=q;
-		return 0;
-	}
-	return 1;
+int sell_cargo ( struct player * dude , struct planet * planet,int cargo_index, int count  ){
+	
+	//check that we have what we are selling.
+	if ( dude->ship->cargo[cargo_index].avil < count ) return NOT_AVIL;
+
+	//all looks good so we do the trade.
+	planet->cargo_types[cargo_index].avil += count; 
+	dude->cash += count*planet->cargo_types[cargo_index].price;
+	dude->ship->cargo[cargo_index].avil -= count;
+	dude->ship->cap += count;
+	return 0;
 }
 
 
