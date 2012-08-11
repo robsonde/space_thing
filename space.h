@@ -102,6 +102,7 @@ int type;
 int cap;
 struct econ cargo [num_cargo_types];
 int num_cargo;
+int fuel;
 };
 
 
@@ -117,7 +118,7 @@ struct player
 char const * name;
 int cash;
 struct space_ship * ship;
-int where;
+int place;
 };
 
 

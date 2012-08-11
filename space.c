@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <math.h>
 #include <GL/glut.h>
 #include <GL/gl.h>
 #include "space.h"
@@ -29,7 +30,7 @@ struct planet planets[]={
 .name="flarg",
 .notes="planet flarg",
 .cargo_types={ {.price=125,.avil=0},{.price=100,.avil=1} },
-.pos={.x=3,.y=3},
+.pos={.x=7,.y=7},
 },
 
 };
@@ -45,6 +46,7 @@ struct planet planets[]={
 struct space_ship ship={
 .name = "Dragon",
 .cap=14,
+.fuel=3,
 };
 
 
@@ -57,6 +59,7 @@ struct player player={
 .name="the dude",
 .cash=1000,
 .ship=&ship,
+.place=1,    //which planet do we start at
 };
 
 
@@ -101,6 +104,20 @@ printf("  %s:%d:price:%d\n",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_
 }  
 printf("\n"); 
 }
+
+
+
+
+
+
+//function to fly to another planet.
+int fly_to_planet( struct player * dude , int dest){
+//will add code to check for fuel
+dude->place=dest;
+
+return 0;
+}
+
 
 
 
@@ -203,6 +220,10 @@ print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
 
+printf("distance from planet 1 to planet 2\n"); 
+int distance = hypot(3,4);
+printf("%d",distance);
+ 
 return 0;
 }
 
