@@ -15,6 +15,8 @@ struct planet planets[]={
 .name="bob",
 .notes="planet bob",
 .cargo_types={ {.price=100,.avil=50} }, 
+.pos.x=1,
+.pos.y=2,
 },
 
 {
@@ -181,8 +183,6 @@ glutPostRedisplay();
 int main (void)
 {
 print_planet(&planets[0]);
-print_planet(&planets[1]);
-print_planet(&planets[2]);
 print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
@@ -191,8 +191,6 @@ buy_cargo(&player,&planets[0],0,7);
 buy_cargo(&player,&planets[2],1,1);
 
 print_planet(&planets[0]);
-print_planet(&planets[1]);
-print_planet(&planets[2]);
 print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
@@ -200,8 +198,6 @@ printf("-------------------\n");
 sell_cargo(&player,&planets[1],0,7);
 
 print_planet(&planets[0]);
-print_planet(&planets[1]);
-print_planet(&planets[2]);
 print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");

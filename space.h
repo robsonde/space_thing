@@ -1,6 +1,6 @@
 #pragma once
 
-#define num_cargo_types 2
+#define num_cargo_types 10
 
 
 
@@ -117,6 +117,7 @@ struct player
 char const * name;
 int cash;
 struct space_ship * ship;
+int where;
 };
 
 
