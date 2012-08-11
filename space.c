@@ -15,20 +15,21 @@ struct planet planets[]={
 .name="bob",
 .notes="planet bob",
 .cargo_types={ {.price=100,.avil=50} }, 
-.pos.x=1,
-.pos.y=2,
+.pos={.x=1,.y=1},
 },
 
 {
 .name="foo",
 .notes="planet foo",
 .cargo_types={ {.price=175,.avil=5} }, 
+.pos={.x=2,.y=2},
 },
 
 {
 .name="flarg",
 .notes="planet flarg",
 .cargo_types={ {.price=125,.avil=0},{.price=100,.avil=1} },
+.pos={.x=3,.y=3},
 },
 
 };
