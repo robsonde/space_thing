@@ -7,10 +7,10 @@
 #define NO_SPACE 1
 #define NO_CASH 2
 #define NOT_AVIL 3
+#define NO_FUEL 4
 
 //set DEBUG to 1 for debuggin infomation 
 #define DEBUG 0
-
 
 
 
@@ -117,11 +117,23 @@ printf("\n");
 
 //function to fly to another planet.
 int fly_to_planet( struct player * dude , int dest){
-//will add code to check for fuel
+
+struct planet from_planet = planets[dude->place];
+struct planet to_planet = planets[dest];
+
+int dx = to_planet.pos.x - from_planet.pos.x;
+int dy = to_planet.pos.y - from_planet.pos.y;
+
+//check for fuel
+int distance = hypot(dx,dy);
+
+if ( distance > dude->ship->fuel ){
+	if (DEBUG) {printf( "[DEBUG] no fuel to fly to %d\n", dest ); }
+	return NO_FUEL;
+}
+
 dude->place=dest;
-
 if (DEBUG) { printf ("[DEBUG] flying to:%s\n",planets[dest].name); }
-
 return 0;
 }
 
@@ -238,7 +250,7 @@ print_player(&player);
 printf("-------------------\n");
 
 
-fly_to_planet(&player,1);
+fly_to_planet(&player,2);
 
 
 sell_cargo(&player,0,7);
