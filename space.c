@@ -8,6 +8,11 @@
 #define NO_CASH 2
 #define NOT_AVIL 3
 
+//set DEBUG to 1 for debuggin infomation 
+#define DEBUG 0
+
+
+
 
 
 //setup of the planets.
@@ -59,7 +64,7 @@ struct player player={
 .name="the dude",
 .cash=1000,
 .ship=&ship,
-.place=1,    //which planet do we start at
+.place=0,    //which planet do we start at
 };
 
 
@@ -115,6 +120,8 @@ int fly_to_planet( struct player * dude , int dest){
 //will add code to check for fuel
 dude->place=dest;
 
+if (DEBUG) { printf ("[DEBUG] flying to:%s\n",planets[dest].name); }
+
 return 0;
 }
 
@@ -126,19 +133,32 @@ return 0;
 
 
 //function for buying cargo from a planet. 
-int buy_cargo ( struct player * dude , struct planet * planet,int cargo_index, int count ){
-	int cost = count*planet->cargo_types[cargo_index].price;
-
+int buy_cargo ( struct player * dude, int cargo_index, int count ){
+	struct planet planet = planets[dude->place];
+	int cost = count * planet.cargo_types[cargo_index].price;
+	
 	//checking if we have cash and space for this trade.
-	if ( dude->ship->cap < count ) return NO_SPACE;
-	if ( dude->cash < cost ) return NO_CASH;
-	if ( planet->cargo_types[cargo_index].avil < count ) return NOT_AVIL;
+	if ( dude->ship->cap < count ) {
+		if (DEBUG) {printf ("[DEBUG] buy cargo: NO_SPACE\n"); }
+	return NO_SPACE;
+	}
+
+	if ( dude->cash < cost ) {
+		if (DEBUG) {printf ("[DEBUG] buy cargo: NO_CASH:%d\n",cost); }
+	return NO_CASH;
+	}
+
+	if ( planet.cargo_types[cargo_index].avil < count ) {
+		if (DEBUG) {printf ("[DEBUG] buy cargo: NO_AVIL\n"); }
+	return NOT_AVIL;
+	}
 
 	//all looks good so we do the trade.
-	planet->cargo_types[cargo_index].avil -= count;
+	planet.cargo_types[cargo_index].avil -= count;
 	dude->cash -= cost;
 	dude->ship->cargo[cargo_index].avil += count;
 	dude->ship->cap -= count;
+	if ( DEBUG ) { printf ("[DEBUG] buy cargo:%d:%d\n",cargo_index,count); } 
 	return 0;
 }
 
@@ -146,16 +166,22 @@ int buy_cargo ( struct player * dude , struct planet * planet,int cargo_index, i
 
 
 //function for selling cargo to a planet.
-int sell_cargo ( struct player * dude , struct planet * planet,int cargo_index, int count  ){
-	
+int sell_cargo ( struct player * dude, int cargo_index, int count  ){
+	struct planet planet = planets[dude->place];
+
 	//check that we have what we are selling.
-	if ( dude->ship->cargo[cargo_index].avil < count ) return NOT_AVIL;
+	if ( dude->ship->cargo[cargo_index].avil < count ){
+		if (DEBUG) {printf ("[DEBUG] sell cargo: NOT_AVIL\n"); }
+		return NOT_AVIL;
+	}
+
 
 	//all looks good so we do the trade.
-	planet->cargo_types[cargo_index].avil += count; 
-	dude->cash += count*planet->cargo_types[cargo_index].price;
+	planet.cargo_types[cargo_index].avil += count; 
+	dude->cash += count*planet.cargo_types[cargo_index].price;
 	dude->ship->cargo[cargo_index].avil -= count;
 	dude->ship->cap += count;
+	if ( DEBUG ) { printf ("[DEBUG] sell cargo:%d:%d\n",cargo_index,count); } 
 	return 0;
 }
 
@@ -205,25 +231,23 @@ print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
 
-buy_cargo(&player,&planets[0],0,7);
-buy_cargo(&player,&planets[2],1,1);
-
+buy_cargo(&player,0,7);
 print_planet(&planets[0]);
 print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
 
-sell_cargo(&player,&planets[1],0,7);
 
-print_planet(&planets[0]);
+fly_to_planet(&player,1);
+
+
+sell_cargo(&player,0,7);
+
+print_planet(&planets[1]);
 print_ship(&ship);
 print_player(&player);
 printf("-------------------\n");
 
-printf("distance from planet 1 to planet 2\n"); 
-int distance = hypot(3,4);
-printf("%d",distance);
- 
 return 0;
 }
 
