@@ -1,7 +1,7 @@
 #pragma once
 
 #define num_cargo_types 10
-
+#define num_planets 10
 
 
 struct location 
@@ -20,8 +20,6 @@ int contraband;
 
 
 
-
-
 struct econ
 {
 int price;
@@ -33,61 +31,7 @@ int avil;
 
 
 
-
-
-
-//setup of the cargo types and prices.
-struct cargo cargo_types[]={
-{.name="Water",
-.base_price=50,
-.contraband=0,
-},
-
-{.name="Food",
-.base_price=100,
-.contraband=0,
-},
-
-{.name="Furs",
-.base_price=300,
-.contraband=0,
-},
-
-{.name="Ore",
-.base_price=400,
-.contraband=0,
-},
-
-{.name="Games",
-.base_price=200,
-.contraband=0,
-},
-
-{.name="Firearms",
-.base_price=900,
-.contraband=1,
-},
-
-{.name="Medicine",
-.base_price=500,
-.contraband=0,
-},
-
-{.name="Machines",
-.base_price=1100,
-.contraband=0,
-},
-
-{.name="Narcotics",
-.base_price=3000,
-.contraband=1,
-},
-
-{.name="Robots",
-.base_price=5000,
-.contraband=0,
-},
-};
+struct cargo cargo_types[num_cargo_types];
 
 
 
@@ -140,4 +84,20 @@ int pirates;
 struct location pos;
 struct econ cargo_types [num_cargo_types];
 };
+
+
+
+
+
+
+struct planet planets[num_planets];
+
+struct space_ship ship;
+
+struct player player;
+
+
+
+
+
 

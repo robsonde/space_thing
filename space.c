@@ -13,64 +13,6 @@
 #define DEBUG 0
 
 
-
-
-//setup of the planets.
-struct planet planets[]={
-{
-.name="bob",
-.notes="planet bob",
-.cargo_types={ {.price=100,.avil=50} }, 
-.pos={.x=1,.y=1},
-},
-
-{
-.name="foo",
-.notes="planet foo",
-.cargo_types={ {.price=175,.avil=5} }, 
-.pos={.x=2,.y=2},
-},
-
-{
-.name="flarg",
-.notes="planet flarg",
-.cargo_types={ {.price=125,.avil=0},{.price=100,.avil=1} },
-.pos={.x=7,.y=7},
-},
-
-};
-
-
-
-
-
-
-
-
-// setup of a ship.
-struct space_ship ship={
-.name = "Dragon",
-.cap=14,
-.fuel=3,
-};
-
-
-
-
-
-
-// setup of the player.
-struct player player={
-.name="the dude",
-.cash=1000,
-.ship=&ship,
-.place=0,    //which planet do we start at
-};
-
-
-
-
-
 //prints basic player stats.
 void print_player(struct player * p)
 {
@@ -78,7 +20,6 @@ printf("%s\n","Player stats");
 printf("  Commander:%s\n",p->name);
 printf("  Worth:%d\n\n",p->cash);
 }
-
 
 
 

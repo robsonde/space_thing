@@ -1,9 +1,11 @@
 thing I want to get done next / soon.
 
+
+********DONE***************
 1.  code to move player (and his ship)  between planets.
 from where we are now to where to want to go.
 checks fuel, moves to new location.
-
+********DONE***************
 
 2.  basic menu type system to make testing a bit more like playing the game.
 just options in a text input, buy, sell, move to planet
