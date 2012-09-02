@@ -2,6 +2,8 @@
 #include <math.h>
 #include <SDL.h>
 #include <GL/gl.h>
+#include <FTGL/ftgl.h>
+#include <stdarg.h>
 #include "space.h"
 
 #define NO_SPACE 1
@@ -15,6 +17,26 @@
 SDL_Surface *screen;
 
 int current_screen = 0;
+
+static FTGLfont *font;
+
+
+// recreate  printf as a GL thing
+void glPrintf(float x,float y, char const * fmt, ...) {
+	static char buf[1024];
+	va_list vl;
+
+	va_start(vl, fmt);
+	vsnprintf(buf, sizeof(buf), fmt, vl);
+	va_end(vl);
+
+        glRasterPos2f(x,y);
+	ftglRenderFont(font, buf, FTGL_RENDER_ALL);
+}
+
+
+
+
 
 
 
@@ -59,18 +81,17 @@ glVertex2f(0.6,0.1);
 glVertex2f(1,0);
 glVertex2f(1,0.1);
 
-
-
-
-
-
 glEnd();
 
+/* Set the font size and render a small text. */
+ftglSetFontFaceSize(font, 25, 12);
 
-
-
-
-
+glPrintf(0.01,0.09,"%s","Status");
+glPrintf(0.11,0.09,"%s","Ship Info");
+glPrintf(0.21,0.09,"%s","Planet");
+glPrintf(0.31,0.09,"%s","Buy Cargo");
+glPrintf(0.41,0.09,"%s","Sell Cargo");
+glPrintf(0.51,0.09,"%s","Star Map");
 
 }
 
@@ -79,7 +100,11 @@ glEnd();
 
 void draw_status(void) {
 
-draw_background();
+    draw_background();
+
+    glPrintf(0.1,0.3,"%s","Player stats");
+    glPrintf(0.1,0.4,"  Commander:%s",player.name);
+    glPrintf(0.1,0.5,"  Worth:%d",player.cash);
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -177,26 +202,6 @@ if ( current_screen == 5 ) {draw_local_map();}
 
 
 
-
-
-
-
-
-
-
-
-
-
-//prints basic player stats.
-void print_player(struct player * p)
-{
-    printf("%s\n","Player stats");
-    printf("  Commander:%s\n",p->name);
-    printf("  Worth:%d\n\n",p->cash);
-}
-
-
-
 //print the infomation of a ship.
 void print_ship(struct space_ship * s)
 {
@@ -224,7 +229,6 @@ void print_planet (struct planet * p)
     }
     printf("\n");
 }
-
 
 
 
@@ -330,8 +334,11 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
 
 
 
-
 int main(void) {
+ 
+    /* Create a pixmap font from a TrueType file. */
+    font = ftglCreatePixmapFont("FreeSans.ttf");
+   
     SDL_Init(SDL_INIT_VIDEO);
 
     screen = SDL_SetVideoMode(1024, 768, 0, SDL_OPENGL|SDL_DOUBLEBUF);
