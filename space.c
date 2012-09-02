@@ -21,6 +21,14 @@ int current_screen = 0;
 static FTGLfont *font;
 
 
+static char const* menu_items[]={
+"Status","Ship Info","Planet Info","Buy Cargo","Sell Cargo","Star Map"
+};
+ 
+
+
+
+
 // recreate  printf as a GL thing
 void glPrintf(float x,float y, char const * fmt, ...) {
 	static char buf[1024];
@@ -43,6 +51,9 @@ void glPrintf(float x,float y, char const * fmt, ...) {
 
 
 void draw_background(void){
+
+
+
 glClearColor(0,0,0,0);
 glClear(GL_COLOR_BUFFER_BIT);
 
@@ -57,41 +68,33 @@ glColor4f(1,1,1,1);
 glVertex2f(0,0.1);
 glVertex2f(1,0.1);
 
-glVertex2f(0,0);
-glVertex2f(0,0.1);
 
-glVertex2f(0.1,0);
-glVertex2f(0.1,0.1);
+size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
 
-glVertex2f(0.2,0);
-glVertex2f(0.2,0.1);
+float spacing = 1.0 / num_items;
 
-glVertex2f(0.3,0);
-glVertex2f(0.3,0.1);
+for (size_t item=0;item<num_items;item++)
+{
+glVertex2f((item*spacing),0);
+glVertex2f((item*spacing),0.1);
+}
 
-glVertex2f(0.4,0);
-glVertex2f(0.4,0.1);
-
-glVertex2f(0.5,0);
-glVertex2f(0.5,0.1);
-
-glVertex2f(0.6,0);
-glVertex2f(0.6,0.1);
-
-glVertex2f(1,0);
-glVertex2f(1,0.1);
 
 glEnd();
 
 /* Set the font size and render a small text. */
 ftglSetFontFaceSize(font, 25, 12);
 
-glPrintf(0.01,0.09,"%s","Status");
-glPrintf(0.11,0.09,"%s","Ship Info");
-glPrintf(0.21,0.09,"%s","Planet");
-glPrintf(0.31,0.09,"%s","Buy Cargo");
-glPrintf(0.41,0.09,"%s","Sell Cargo");
-glPrintf(0.51,0.09,"%s","Star Map");
+for (size_t item=0;item<num_items;item++)
+{
+if ((int)item == current_screen)
+glColor4f(1,0,0,1);
+else
+glColor4f(1,1,1,1);
+
+glPrintf(0.01+(item*spacing),0.09,"%s",menu_items[item]);
+}
+
 
 }
 
@@ -357,7 +360,7 @@ int main(void) {
             }
             if (event.type ==  SDL_KEYDOWN) {
             current_screen++;
-            current_screen%=5;
+            current_screen%=6;
             }
 
         }
