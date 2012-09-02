@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <math.h>
-#include <GL/glut.h>
+#include <SDL.h>
 #include <GL/gl.h>
 #include "space.h"
 
@@ -11,6 +11,180 @@
 
 //set DEBUG to 1 for debuggin infomation
 #define DEBUG 0
+
+SDL_Surface *screen;
+
+int current_screen = 0;
+
+
+
+
+
+void draw_background(void){
+glClearColor(1,0,0,0);
+glClear(GL_COLOR_BUFFER_BIT);
+
+glMatrixMode(GL_PROJECTION);
+glLoadIdentity();
+glOrtho(0,1,1,0,-1,1);
+glMatrixMode(GL_MODELVIEW);
+glLoadIdentity();
+
+glBegin(GL_LINES);
+glColor4f(1,1,1,1);
+glVertex2f(0,0.1);
+glVertex2f(1,0.1);
+
+glVertex2f(0,0);
+glVertex2f(0,0.1);
+
+glVertex2f(0.1,0);
+glVertex2f(0.1,0.1);
+
+glVertex2f(0.2,0);
+glVertex2f(0.2,0.1);
+
+glVertex2f(0.3,0);
+glVertex2f(0.3,0.1);
+
+glVertex2f(0.4,0);
+glVertex2f(0.4,0.1);
+
+glVertex2f(0.5,0);
+glVertex2f(0.5,0.1);
+
+glVertex2f(0.6,0);
+glVertex2f(0.6,0.1);
+
+glVertex2f(1,0);
+glVertex2f(1,0.1);
+
+
+
+
+
+
+glEnd();
+
+
+
+
+
+
+
+}
+
+
+
+
+void draw_status(void) {
+
+draw_background();
+
+// update the screen buffer
+    SDL_GL_SwapBuffers();
+
+}
+
+
+
+
+
+void draw_ship_info(void) {
+
+// fill the screen with black color
+    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 255, 0));
+
+// update the screen buffer
+    SDL_GL_SwapBuffers();
+
+}
+
+
+
+
+
+void draw_planet_info(void) {
+
+// fill the screen with black color
+    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 255));
+
+// update the screen buffer
+    SDL_GL_SwapBuffers();
+
+}
+
+
+
+
+
+
+void draw_buy_stuff(void) {
+
+// fill the screen with black color
+    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 255, 255, 0));
+
+// update the screen buffer
+    SDL_GL_SwapBuffers();
+
+}
+
+
+
+
+
+
+void draw_sell_stuff(void) {
+
+// fill the screen with black color
+    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 255, 0, 255));
+
+// update the screen buffer
+    SDL_GL_SwapBuffers();
+
+}
+
+
+
+
+void draw_local_map(void) {
+
+// fill the screen with black color
+    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 255, 255, 255));
+
+// update the screen buffer
+    SDL_GL_SwapBuffers();
+
+}
+
+
+
+
+
+
+
+void draw(void) {
+if ( current_screen == 0 ) {draw_status();}
+if ( current_screen == 1 ) {draw_ship_info();}
+if ( current_screen == 2 ) {draw_planet_info();}
+if ( current_screen == 3 ) {draw_buy_stuff();}
+if ( current_screen == 4 ) {draw_sell_stuff();}
+if ( current_screen == 5 ) {draw_local_map();}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //prints basic player stats.
@@ -157,65 +331,31 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
 
 
 
+int main(void) {
+    SDL_Init(SDL_INIT_VIDEO);
 
+    screen = SDL_SetVideoMode(1024, 768, 0, SDL_OPENGL|SDL_DOUBLEBUF);
 
-void init (void)
-{
-    glClearColor(0,0,0,0);
-}
+    SDL_WM_SetCaption("Simple Window", "Simple Window");
 
+    atexit(SDL_Quit);
 
-void display (void)
-{
-    glClear(GL_COLOR_BUFFER_BIT |GL_DEPTH_BUFFER_BIT );
-    glutSwapBuffers ();
-}
+    for(;;) {
+        SDL_Event event;
+        while(SDL_PollEvent(&event)) {
+            if (event.type == SDL_QUIT) {
+                return 0;
+            }
+            if (event.type ==  SDL_KEYDOWN) {
+            current_screen++;
+            current_screen%=5;
+            }
 
+        }
 
-void reshape (int Width,int Height)
-{
-    glViewport (0,0,Width,Height);
-}
+        draw();
+    }
 
-void tick (void)
-{
-
-
-
-    glutPostRedisplay();
-}
-
-
-
-
-
-
-
-
-// this is only a main for testing other functions and data setup.
-int main (void)
-{
-    print_planet(&planets[0]);
-    print_ship(&ship);
-    print_player(&player);
-    printf("-------------------\n");
-
-    buy_cargo(&player,0,7);
-    print_planet(&planets[0]);
-    print_ship(&ship);
-    print_player(&player);
-    printf("-------------------\n");
-
-
-    fly_to_planet(&player,2);
-
-
-    sell_cargo(&player,0,7);
-
-    print_planet(&planets[1]);
-    print_ship(&ship);
-    print_player(&player);
-    printf("-------------------\n");
 
     return 0;
 }
@@ -224,28 +364,5 @@ int main (void)
 
 
 
-/*int main(int argc, char** argv)
-{
-  // GLUT Window Initialization:
-  glutInit (&argc, argv);
-  glutInitWindowSize (640, 480);
-  glutInitDisplayMode ( GLUT_RGB | GLUT_DOUBLE | GLUT_DEPTH);
-  glutCreateWindow ("Space Thing");
 
-  // Initialize OpenGL graphics state
-  init();
-
-  // Register callbacks:
-  glutDisplayFunc (display);
-  glutReshapeFunc (reshape);
-  //glutKeyboardFunc (Keyboard);
-  //glutMouseFunc (MouseButton);
-  //glutMotionFunc (MouseMotion);
-  glutIdleFunc (tick);
-
-  // Turn the flow of control over to GLUT
-  glutMainLoop ();
-  return 0;
-}
-*/
 

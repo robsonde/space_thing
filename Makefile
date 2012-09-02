@@ -4,8 +4,8 @@
 
 TARGET := space_thing
 CSRC := $(shell find . -iname '*.c')
-LIBS := gl
+LIBS := sdl gl
 CFLAGS := -std=gnu99 -O2 -pipe -Wall -Wextra -Werror
-LDFLAGS := -lglut
+LDFLAGS := 
 
 include common.mk
