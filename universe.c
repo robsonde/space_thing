@@ -98,12 +98,21 @@ struct planet planets[]= {
 
 
 
+
+
+
+
+
+
+
 // setup of a ship.
 struct space_ship ship= {
     .name = "Dragon",
     .cap=14,
     .fuel=3,
 };
+
+
 
 
 
@@ -114,8 +123,4 @@ struct player player= {
     .ship=&ship,
     .place=0,    //which planet do we start at
 };
-
-
-
-
 

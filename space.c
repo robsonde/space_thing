@@ -21,25 +21,25 @@ int current_screen = 0;
 static FTGLfont *font;
 
 
-static char const* menu_items[]={
-"Status","Ship Info","Planet Info","Buy Cargo","Sell Cargo","Star Map"
+static char const* menu_items[]= {
+    "Status","Ship Info","Planet Info","Buy Cargo","Sell Cargo","Star Map"
 };
- 
+
 
 
 
 
 // recreate  printf as a GL thing
 void glPrintf(float x,float y, char const * fmt, ...) {
-	static char buf[1024];
-	va_list vl;
+    static char buf[1024];
+    va_list vl;
 
-	va_start(vl, fmt);
-	vsnprintf(buf, sizeof(buf), fmt, vl);
-	va_end(vl);
+    va_start(vl, fmt);
+    vsnprintf(buf, sizeof(buf), fmt, vl);
+    va_end(vl);
 
-        glRasterPos2f(x,y);
-	ftglRenderFont(font, buf, FTGL_RENDER_ALL);
+    glRasterPos2f(x,y);
+    ftglRenderFont(font, buf, FTGL_RENDER_ALL);
 }
 
 
@@ -50,51 +50,45 @@ void glPrintf(float x,float y, char const * fmt, ...) {
 
 
 
-void draw_background(void){
+void draw_background(void) {
 
+    glClearColor(0,0,0,0);
+    glClear(GL_COLOR_BUFFER_BIT);
 
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0,1,1,0,-1,1);
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
 
-glClearColor(0,0,0,0);
-glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_LINES);
+    glColor4f(1,1,1,1);
+    glVertex2f(0,0.1);
+    glVertex2f(1,0.1);
 
-glMatrixMode(GL_PROJECTION);
-glLoadIdentity();
-glOrtho(0,1,1,0,-1,1);
-glMatrixMode(GL_MODELVIEW);
-glLoadIdentity();
+    size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
+    float spacing = 1.0 / num_items;
 
-glBegin(GL_LINES);
-glColor4f(1,1,1,1);
-glVertex2f(0,0.1);
-glVertex2f(1,0.1);
+    for (size_t item=0; item<num_items; item++)
+    {
+        glVertex2f((item*spacing),0);
+        glVertex2f((item*spacing),0.1);
+    }
 
+    glEnd();
 
-size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
+    /* Set the font size and render a small text. */
+    ftglSetFontFaceSize(font, 25, 12);
 
-float spacing = 1.0 / num_items;
+    for (size_t item=0; item<num_items; item++)
+    {
+        if ((int)item == current_screen)
+            glColor4f(1,0,0,1);
+        else
+            glColor4f(1,1,1,1);
 
-for (size_t item=0;item<num_items;item++)
-{
-glVertex2f((item*spacing),0);
-glVertex2f((item*spacing),0.1);
-}
-
-
-glEnd();
-
-/* Set the font size and render a small text. */
-ftglSetFontFaceSize(font, 25, 12);
-
-for (size_t item=0;item<num_items;item++)
-{
-if ((int)item == current_screen)
-glColor4f(1,0,0,1);
-else
-glColor4f(1,1,1,1);
-
-glPrintf(0.01+(item*spacing),0.09,"%s",menu_items[item]);
-}
-
+        glPrintf(0.01+(item*spacing),0.09,"%s",menu_items[item]);
+    }
 
 }
 
@@ -104,7 +98,7 @@ glPrintf(0.01+(item*spacing),0.09,"%s",menu_items[item]);
 void draw_status(void) {
 
     draw_background();
-    
+
     glPrintf(0.1,0.4,"Commander: %s",player.name);
     glPrintf(0.1,0.5,"Worth: %d",player.cash);
 
@@ -141,6 +135,14 @@ void draw_ship_info(void) {
 void draw_planet_info(void) {
 
     draw_background();
+
+struct planet * p = &planets[player.place];
+
+    glPrintf(0.1,0.2,"Name: %s",p->name);
+    for (int i=0; i<num_cargo_types; i++)
+    {
+        glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
+    }
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -194,31 +196,30 @@ void draw_local_map(void) {
 
 
 void draw(void) {
-if ( current_screen == 0 ) {draw_status();}
-if ( current_screen == 1 ) {draw_ship_info();}
-if ( current_screen == 2 ) {draw_planet_info();}
-if ( current_screen == 3 ) {draw_buy_stuff();}
-if ( current_screen == 4 ) {draw_sell_stuff();}
-if ( current_screen == 5 ) {draw_local_map();}
+    if ( current_screen == 0 ) {
+        draw_status();
+    }
+    if ( current_screen == 1 ) {
+        draw_ship_info();
+    }
+    if ( current_screen == 2 ) {
+        draw_planet_info();
+    }
+    if ( current_screen == 3 ) {
+        draw_buy_stuff();
+    }
+    if ( current_screen == 4 ) {
+        draw_sell_stuff();
+    }
+    if ( current_screen == 5 ) {
+        draw_local_map();
+    }
 }
 
 
 
 
 
-
-//print the infomation of a ship.
-void print_ship(struct space_ship * s)
-{
-    printf("%s\n","Ship stats");
-    printf("  Ship Name:%s\n",s->name);
-    for (int i=0; i<num_cargo_types; i++)
-    {
-        printf("  %s:%d\n",cargo_types[i].name,s->cargo[i].avil);
-    }
-    printf("  Avil capacity:%d\n",s->cap);
-    printf("\n");
-};
 
 
 
@@ -340,10 +341,10 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
 
 
 int main(void) {
- 
+
     /* Create a pixmap font from a TrueType file. */
     font = ftglCreatePixmapFont("FreeSans.ttf");
-   
+
     SDL_Init(SDL_INIT_VIDEO);
 
     screen = SDL_SetVideoMode(1024, 768, 0, SDL_OPENGL|SDL_DOUBLEBUF);
@@ -358,28 +359,28 @@ int main(void) {
             if (event.type == SDL_QUIT) {
                 return 0;
             }
-            
 
-      if (event.type == SDL_KEYDOWN)
-         {
-            SDLKey keyPressed = event.key.keysym.sym;
-      
-            switch (keyPressed)
+
+            if (event.type == SDL_KEYDOWN)
             {
-              case SDLK_ESCAPE:
-                  return 0;
-              case SDLK_LEFT:
-                  current_screen+=5;
-                  current_screen%=6;
-                  break;
-              case SDLK_RIGHT:
-                  current_screen++;
-                  current_screen%=6;
-                  break;
-               default:
-                 break;
+                SDLKey keyPressed = event.key.keysym.sym;
+
+                switch (keyPressed)
+                {
+                case SDLK_ESCAPE:
+                    return 0;
+                case SDLK_LEFT:
+                    current_screen+=5;
+                    current_screen%=6;
+                    break;
+                case SDLK_RIGHT:
+                    current_screen++;
+                    current_screen%=6;
+                    break;
+                default:
+                    break;
+                }
             }
-         }
         }
 
         draw();
