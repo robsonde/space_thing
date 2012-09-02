@@ -100,7 +100,8 @@ void draw_status(void) {
     draw_background();
 
     glPrintf(0.1,0.4,"Commander: %s",player.name);
-    glPrintf(0.1,0.5,"Worth: %d",player.cash);
+    glPrintf(0.1,0.5,"Location: %s",planets[player.place].name);
+    glPrintf(0.1,0.6,"Worth: %d",player.cash);
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
