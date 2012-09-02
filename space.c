@@ -358,11 +358,28 @@ int main(void) {
             if (event.type == SDL_QUIT) {
                 return 0;
             }
-            if (event.type ==  SDL_KEYDOWN) {
-            current_screen++;
-            current_screen%=6;
-            }
+            
 
+      if (event.type == SDL_KEYDOWN)
+         {
+            SDLKey keyPressed = event.key.keysym.sym;
+      
+            switch (keyPressed)
+            {
+              case SDLK_ESCAPE:
+                  return 0;
+              case SDLK_LEFT:
+                  current_screen+=5;
+                  current_screen%=6;
+                  break;
+              case SDLK_RIGHT:
+                  current_screen++;
+                  current_screen%=6;
+                  break;
+               default:
+                 break;
+            }
+         }
         }
 
         draw();
