@@ -43,7 +43,7 @@ void glPrintf(float x,float y, char const * fmt, ...) {
 
 
 void draw_background(void){
-glClearColor(1,0,0,0);
+glClearColor(0,0,0,0);
 glClear(GL_COLOR_BUFFER_BIT);
 
 glMatrixMode(GL_PROJECTION);
@@ -101,10 +101,9 @@ glPrintf(0.51,0.09,"%s","Star Map");
 void draw_status(void) {
 
     draw_background();
-
-    glPrintf(0.1,0.3,"%s","Player stats");
-    glPrintf(0.1,0.4,"  Commander:%s",player.name);
-    glPrintf(0.1,0.5,"  Worth:%d",player.cash);
+    
+    glPrintf(0.1,0.4,"Commander: %s",player.name);
+    glPrintf(0.1,0.5,"Worth: %d",player.cash);
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -117,8 +116,14 @@ void draw_status(void) {
 
 void draw_ship_info(void) {
 
-// fill the screen with black color
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 255, 0));
+    draw_background();
+
+    glPrintf(0.1,0.2,"Ship Name: %s",ship.name);
+    for (int i=0; i<num_cargo_types; i++)
+    {
+        glPrintf(0.1,(0.3+(0.06*i)),"%s: %d",cargo_types[i].name,ship.cargo[i].avil);
+    }
+    glPrintf(0.1,(0.3+(0.06*num_cargo_types)),"Avil capacity: %d",ship.cap);
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -129,10 +134,10 @@ void draw_ship_info(void) {
 
 
 
+
 void draw_planet_info(void) {
 
-// fill the screen with black color
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 0, 0, 255));
+    draw_background();
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -146,8 +151,7 @@ void draw_planet_info(void) {
 
 void draw_buy_stuff(void) {
 
-// fill the screen with black color
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 255, 255, 0));
+    draw_background();
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -161,8 +165,7 @@ void draw_buy_stuff(void) {
 
 void draw_sell_stuff(void) {
 
-// fill the screen with black color
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 255, 0, 255));
+    draw_background();
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -174,8 +177,7 @@ void draw_sell_stuff(void) {
 
 void draw_local_map(void) {
 
-// fill the screen with black color
-    SDL_FillRect(screen, &screen->clip_rect, SDL_MapRGB(screen->format, 255, 255, 255));
+    draw_background();
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
