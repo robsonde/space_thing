@@ -67,49 +67,11 @@ struct cargo cargo_types[]= {
 
 
 
-
-
-
-
-//setup of the planets.
-struct planet planets[]= {
-    {
-        .name="bob",
-        .notes="planet bob",
-        .cargo_types={ {.price=100,.avil=50} },
-        .pos={.x=1,.y=1},
-    },
-
-    {
-        .name="foo",
-        .notes="planet foo",
-        .cargo_types={ {.price=175,.avil=567} },
-        .pos={.x=2,.y=2},
-    },
-
-    {
-        .name="flarg",
-        .notes="planet flarg",
-        .cargo_types={ {.price=125,.avil=450},{.price=100,.avil=1} },
-        .pos={.x=7,.y=7},
-    },
-
-};
-
-
-
-
-
-
-
-
-
-
 // setup of a ship.
 struct space_ship ship= {
     .name = "Dragon",
     .cap=14,
-    .fuel=300,
+    .fuel=14,
 };
 
 
@@ -118,7 +80,7 @@ struct space_ship ship= {
 
 // setup of the player.
 struct player player= {
-    .name="the dude",
+    .name="The Dude",
     .cash=1000,
     .ship=&ship,
     .place=0,    //which planet do we start at

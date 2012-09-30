@@ -1,7 +1,7 @@
 #pragma once
 
 #define num_cargo_types 10
-#define num_planets 10
+#define num_planets 30
 #define fuel_cost 5
 
 
@@ -80,6 +80,7 @@ char const * name;
 int techlevel;
 int govt;
 char const * notes;
+int visited;
 int police;
 int pirates;
 struct location pos;
@@ -91,14 +92,9 @@ struct econ cargo_types [num_cargo_types];
 
 
 
-struct planet planets[num_planets];
+extern struct planet planets[num_planets];
 
 struct space_ship ship;
 
 struct player player;
-
-
-
-
-
 

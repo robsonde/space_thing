@@ -50,6 +50,23 @@ void glPrintf(float x,float y, char const * fmt, ...) {
 
 
 
+void draw_circle( float x,float y,float rad){
+ int steps=32;
+float step = 2*M_PI/steps;
+float aspect = (float)screen_x/(float)screen_y;
+
+   glBegin(GL_LINE_LOOP);
+ for (int i=0;i<steps;i++)  { 
+glVertex2f(x+(rad*cosf(i*step)/aspect),y+rad*sinf(i*step));
+}
+glEnd();
+
+}
+
+
+
+
+
 
 
 
@@ -193,8 +210,30 @@ for (int i=0; i<num_cargo_types; i++)
 
 
 void draw_local_map(void) {
+float range=(float)ship.fuel/40;
+struct planet planet = planets[player.place];
+int cen_x=planet.pos.x;    
+int cen_y=planet.pos.y;
+float aspect = (float)screen_x/(float)screen_y;
+    
+draw_background();
+ 
+//draw the line which shows fuel range.   
+    draw_circle(0.5,0.5,range);
 
-    draw_background();
+//draw the local planets.
+for (int i=0;i<num_planets;i++){   
+    
+float planet_x = 0.5 +( planets[i].pos.x - cen_x)/40.0f/aspect;
+float planet_y = 0.5 +( planets[i].pos.y - cen_y)/40.0f;
+
+if ( planets[i].visited == 0)
+   glColor4f(0,1,0,1);
+       else
+   glColor4f(0,0,1,1);
+
+draw_circle(planet_x,planet_y,0.002);
+}
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -255,26 +294,27 @@ void print_planet (struct planet * p)
 //function to fly to another planet.
 int fly_to_planet( struct player * dude , int dest) {
 
-    struct planet from_planet = planets[dude->place];
-    struct planet to_planet = planets[dest];
+    struct planet * from_planet = &planets[dude->place];
+    struct planet * to_planet = &planets[dest];
 
-    int dx = to_planet.pos.x - from_planet.pos.x;
-    int dy = to_planet.pos.y - from_planet.pos.y;
+    int dx = to_planet->pos.x - from_planet->pos.x;
+    int dy = to_planet->pos.y - from_planet->pos.y;
 
 //check for fuel
     int distance = hypot(dx,dy);
 
     if ( distance > dude->ship->fuel ) {
         if (DEBUG) {
-            printf( "[DEBUG] no fuel to fly to %s\n", planets[dest].name );
+            printf( "[DEBUG] no fuel to fly to %s\n", to_planet->name );
         }
         return NO_FUEL;
     }
 
     dude->place=dest;
     dude->ship->fuel-= distance;
+    to_planet->visited=1;   
     if (DEBUG) {
-        printf ("[DEBUG] flying to:%s\n",planets[dest].name);
+        printf ("[DEBUG] flying to:%s\n", to_planet->name);
     }
     return 0;
 }
@@ -298,8 +338,8 @@ return 0;
 
 //function for buying cargo from a planet.
 int buy_cargo ( struct player * dude, int cargo_index, int count ) {
-    struct planet planet = planets[dude->place];
-    int cost = count * planet.cargo_types[cargo_index].price;
+    struct planet * planet = &planets[dude->place];
+    int cost = count * planet->cargo_types[cargo_index].price;
 
     //checking if we have cash and space for this trade.
     if ( dude->ship->cap < count ) {
@@ -316,7 +356,7 @@ int buy_cargo ( struct player * dude, int cargo_index, int count ) {
         return NO_CASH;
     }
 
-    if ( planet.cargo_types[cargo_index].avil < count ) {
+    if ( planet->cargo_types[cargo_index].avil < count ) {
         if (DEBUG) {
             printf ("[DEBUG] buy cargo: NO_AVIL\n");
         }
@@ -324,7 +364,7 @@ int buy_cargo ( struct player * dude, int cargo_index, int count ) {
     }
 
     //all looks good so we do the trade.
-    planet.cargo_types[cargo_index].avil -= count;
+    planet->cargo_types[cargo_index].avil -= count;
     dude->cash -= cost;
     dude->ship->cargo[cargo_index].avil += count;
     dude->ship->cap -= count;
@@ -337,9 +377,13 @@ int buy_cargo ( struct player * dude, int cargo_index, int count ) {
 
 
 
+
+
+
+
 //function for selling cargo to a planet.
 int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
-    struct planet planet = planets[dude->place];
+    struct planet * planet = &planets[dude->place];
 
     //check that we have what we are selling.
     if ( dude->ship->cargo[cargo_index].avil < count ) {
@@ -350,14 +394,35 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
     }
 
     //all looks good so we do the trade.
-    planet.cargo_types[cargo_index].avil += count;
-    dude->cash += count*planet.cargo_types[cargo_index].price;
+    planet->cargo_types[cargo_index].avil += count;
+    dude->cash += count*planet->cargo_types[cargo_index].price;
     dude->ship->cargo[cargo_index].avil -= count;
     dude->ship->cap += count;
     if ( DEBUG ) {
         printf ("[DEBUG] sell cargo:%d:%d\n",cargo_index,count);
     }
     return 0;
+}
+
+
+
+
+
+
+
+struct planet planets[num_planets];
+
+void set_up_planets(void){
+
+for (int i=0;i<num_planets;i++){
+planets[i].name="aa";
+planets[i].notes="aaa";
+planets[i].visited=0;
+planets[i].pos.x=50-rand()%100;
+planets[i].pos.y=50-rand()%100;
+
+}
+
 }
 
 
@@ -373,7 +438,7 @@ game_move%=6;
 
   switch (game_move){
      case 0:
-        buy_fuel(&player,20);
+        buy_fuel(&player,6);
         return 0;
      case 1:
         fly_to_planet(&player,1);
@@ -448,6 +513,10 @@ int keyboard_handler( SDLKey keyPressed ) {
 
 
 int main(void) {
+
+
+    set_up_planets();
+
 
     /* Create a pixmap font from a TrueType file. */
     font = ftglCreatePixmapFont("FreeSans.ttf");
