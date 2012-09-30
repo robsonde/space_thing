@@ -21,6 +21,9 @@ int current_screen = 0;
 //used for testing
 int game_move = 0;
 
+//skill level, higher is easer
+int skill=30;
+
 int screen_x = 1024;
 int screen_y = 768;
 
@@ -420,6 +423,10 @@ planets[i].notes="aaa";
 planets[i].visited=0;
 planets[i].pos.x=50-rand()%100;
 planets[i].pos.y=50-rand()%100;
+   for (int c=0;c<num_cargo_types;c++){
+     planets[i].cargo_types[c].avil=rand()%100;
+     planets[i].cargo_types[c].price=cargo_types[c].base_price + cargo_types[c].base_price * (rand()%skill/100.0f);
+   }
 
 }
 
