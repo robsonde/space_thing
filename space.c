@@ -53,16 +53,16 @@ void glPrintf(float x,float y, char const * fmt, ...) {
 
 
 
-void draw_circle( float x,float y,float rad){
- int steps=32;
-float step = 2*M_PI/steps;
-float aspect = (float)screen_x/(float)screen_y;
+void draw_circle( float x,float y,float rad) {
+    int steps=32;
+    float step = 2*M_PI/steps;
+    float aspect = (float)screen_x/(float)screen_y;
 
-   glBegin(GL_LINE_LOOP);
- for (int i=0;i<steps;i++)  { 
-glVertex2f(x+(rad*cosf(i*step)/aspect),y+rad*sinf(i*step));
-}
-glEnd();
+    glBegin(GL_LINE_LOOP);
+    for (int i=0; i<steps; i++)  {
+        glVertex2f(x+(rad*cosf(i*step)/aspect),y+rad*sinf(i*step));
+    }
+    glEnd();
 
 }
 
@@ -159,7 +159,7 @@ void draw_planet_info(void) {
 
     draw_background();
 
-struct planet * p = &planets[player.place];
+    struct planet * p = &planets[player.place];
 
     glPrintf(0.1,0.2,"Name: %s",p->name);
 
@@ -177,10 +177,10 @@ void draw_buy_stuff(void) {
 
     draw_background();
 
-struct planet * p = &planets[player.place];
-for (int i=0; i<num_cargo_types; i++)
+    struct planet * p = &planets[player.place];
+    for (int i=0; i<num_cargo_types; i++)
     {
-       glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
+        glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
     }
 
 // update the screen buffer
@@ -197,9 +197,9 @@ void draw_sell_stuff(void) {
 
     draw_background();
 
-struct planet * p = &planets[player.place];
-struct space_ship * s = player.ship;
-for (int i=0; i<num_cargo_types; i++)
+    struct planet * p = &planets[player.place];
+    struct space_ship * s = player.ship;
+    for (int i=0; i<num_cargo_types; i++)
     {
         glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,s->cargo[i].avil,p->cargo_types[i].price);
     }
@@ -213,30 +213,30 @@ for (int i=0; i<num_cargo_types; i++)
 
 
 void draw_local_map(void) {
-float range=(float)ship.fuel/40;
-struct planet planet = planets[player.place];
-int cen_x=planet.pos.x;    
-int cen_y=planet.pos.y;
-float aspect = (float)screen_x/(float)screen_y;
-    
-draw_background();
- 
-//draw the line which shows fuel range.   
+    float range=(float)ship.fuel/40;
+    struct planet planet = planets[player.place];
+    int cen_x=planet.pos.x;
+    int cen_y=planet.pos.y;
+    float aspect = (float)screen_x/(float)screen_y;
+
+    draw_background();
+
+//draw the line which shows fuel range.
     draw_circle(0.5,0.5,range);
 
 //draw the local planets.
-for (int i=0;i<num_planets;i++){   
-    
-float planet_x = 0.5 +( planets[i].pos.x - cen_x)/40.0f/aspect;
-float planet_y = 0.5 +( planets[i].pos.y - cen_y)/40.0f;
+    for (int i=0; i<num_planets; i++) {
 
-if ( planets[i].visited == 0)
-   glColor4f(0,1,0,1);
-       else
-   glColor4f(0,0,1,1);
+        float planet_x = 0.5 +( planets[i].pos.x - cen_x)/40.0f/aspect;
+        float planet_y = 0.5 +( planets[i].pos.y - cen_y)/40.0f;
 
-draw_circle(planet_x,planet_y,0.002);
-}
+        if ( planets[i].visited == 0)
+            glColor4f(0,1,0,1);
+        else
+            glColor4f(0,0,1,1);
+
+        draw_circle(planet_x,planet_y,0.002);
+    }
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -315,7 +315,7 @@ int fly_to_planet( struct player * dude , int dest) {
 
     dude->place=dest;
     dude->ship->fuel-= distance;
-    to_planet->visited=1;   
+    to_planet->visited=1;
     if (DEBUG) {
         printf ("[DEBUG] flying to:%s\n", to_planet->name);
     }
@@ -328,9 +328,9 @@ int fly_to_planet( struct player * dude , int dest) {
 
 
 int buy_fuel( struct player * dude , int quanity) {
-dude->ship->fuel += quanity;
-dude->cash -= quanity * fuel_cost;
-return 0;
+    dude->ship->fuel += quanity;
+    dude->cash -= quanity * fuel_cost;
+    return 0;
 }
 
 
@@ -415,20 +415,20 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
 
 struct planet planets[num_planets];
 
-void set_up_planets(void){
+void set_up_planets(void) {
 
-for (int i=0;i<num_planets;i++){
-planets[i].name="aa";
-planets[i].notes="aaa";
-planets[i].visited=0;
-planets[i].pos.x=50-rand()%100;
-planets[i].pos.y=50-rand()%100;
-   for (int c=0;c<num_cargo_types;c++){
-     planets[i].cargo_types[c].avil=rand()%100;
-     planets[i].cargo_types[c].price=cargo_types[c].base_price + cargo_types[c].base_price * (rand()%skill/100.0f);
-   }
+    for (int i=0; i<num_planets; i++) {
+        planets[i].name="aa";
+        planets[i].notes="aaa";
+        planets[i].visited=0;
+        planets[i].pos.x=50-rand()%100;
+        planets[i].pos.y=50-rand()%100;
+        for (int c=0; c<num_cargo_types; c++) {
+            planets[i].cargo_types[c].avil=rand()%100;
+            planets[i].cargo_types[c].price=cargo_types[c].base_price + cargo_types[c].base_price * (rand()%skill/100.0f);
+        }
 
-}
+    }
 
 }
 
@@ -440,28 +440,28 @@ planets[i].pos.y=50-rand()%100;
 
 
 int do_game_move(void) {
-game_move++;
-game_move%=6;
+    game_move++;
+    game_move%=6;
 
-  switch (game_move){
-     case 0:
+    switch (game_move) {
+    case 0:
         buy_fuel(&player,6);
         return 0;
-     case 1:
+    case 1:
         fly_to_planet(&player,1);
         return 0;
-     case 2:
+    case 2:
         buy_cargo(&player,0,3);
         return 0;
-     case 3:
+    case 3:
         fly_to_planet(&player,2);
         return 0;
-     case 4:
-        sell_cargo(&player,0,3); 
+    case 4:
+        sell_cargo(&player,0,3);
         return 0;
-     default:
+    default:
         return 0;
-}
+    }
 
 }
 
@@ -473,12 +473,12 @@ game_move%=6;
 
 
 int mouse_handler( int mouse_x, int mouse_y ) {
-size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
-if (mouse_y < (0.1 * screen_y))
-{
-current_screen= num_items * mouse_x / screen_x;
-}
-return 0;
+    size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
+    if (mouse_y < (0.1 * screen_y))
+    {
+        current_screen= num_items * mouse_x / screen_x;
+    }
+    return 0;
 }
 
 
@@ -489,25 +489,25 @@ return 0;
 
 
 int keyboard_handler( SDLKey keyPressed ) {
- switch (keyPressed)
+    switch (keyPressed)
     {
-       case SDLK_ESCAPE:
-            return 0;
-       case SDLK_LEFT:
-            current_screen+=5;
-            current_screen%=6;
-            break;
-       case SDLK_RIGHT:
-            current_screen++;
-            current_screen%=6;
-            break;
-       case SDLK_UP:      
-            do_game_move();
-            break;
-       default:
-            break;
-      }
- return 0;
+    case SDLK_ESCAPE:
+        return 0;
+    case SDLK_LEFT:
+        current_screen+=5;
+        current_screen%=6;
+        break;
+    case SDLK_RIGHT:
+        current_screen++;
+        current_screen%=6;
+        break;
+    case SDLK_UP:
+        do_game_move();
+        break;
+    default:
+        break;
+    }
+    return 0;
 }
 
 
@@ -540,11 +540,11 @@ int main(void) {
             }
 
             if (event.type == SDL_VIDEORESIZE) {
-screen = SDL_SetVideoMode(event.resize.w,event.resize.h, 0, SDL_OPENGL|SDL_DOUBLEBUF|SDL_RESIZABLE);
-            glViewport(0,0,event.resize.w,event.resize.h);
-            screen_x=event.resize.w;
-            screen_y=event.resize.h;
-}
+                screen = SDL_SetVideoMode(event.resize.w,event.resize.h, 0, SDL_OPENGL|SDL_DOUBLEBUF|SDL_RESIZABLE);
+                glViewport(0,0,event.resize.w,event.resize.h);
+                screen_x=event.resize.w;
+                screen_y=event.resize.h;
+            }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
                 mouse_handler( event.button.x, event.button.y );
