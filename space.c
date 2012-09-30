@@ -21,9 +21,10 @@ int current_screen = 0;
 //used for testing
 int game_move = 0;
 
+int screen_x = 1024;
+int screen_y = 768;
 
 static FTGLfont *font;
-
 
 static char const* menu_items[]= {
     "Status","Ship Info","Planet Info","Buy Cargo","Sell Cargo","Star Map"
@@ -283,6 +284,16 @@ int fly_to_planet( struct player * dude , int dest) {
 
 
 
+int buy_fuel( struct player * dude , int quanity) {
+dude->ship->fuel += quanity;
+dude->cash -= quanity * fuel_cost;
+return 0;
+}
+
+
+
+
+
 
 
 //function for buying cargo from a planet.
@@ -362,6 +373,7 @@ game_move%=6;
 
   switch (game_move){
      case 0:
+        buy_fuel(&player,20);
         return 0;
      case 1:
         fly_to_planet(&player,1);
@@ -388,6 +400,45 @@ game_move%=6;
 
 
 
+int mouse_handler( int mouse_x, int mouse_y ) {
+(void)mouse_x;
+(void)mouse_y;
+if (mouse_y < (0.1 * screen_y))
+{ do_game_move();}
+return 0;
+}
+
+
+
+
+
+
+
+
+int keyboard_handler( SDLKey keyPressed ) {
+ switch (keyPressed)
+    {
+       case SDLK_ESCAPE:
+            return 0;
+       case SDLK_LEFT:
+            current_screen+=5;
+            current_screen%=6;
+            break;
+       case SDLK_RIGHT:
+            current_screen++;
+            current_screen%=6;
+            break;
+       default:
+            break;
+      }
+ return 0;
+}
+
+
+
+
+
+
 
 
 
@@ -396,13 +447,9 @@ int main(void) {
 
     /* Create a pixmap font from a TrueType file. */
     font = ftglCreatePixmapFont("FreeSans.ttf");
-
     SDL_Init(SDL_INIT_VIDEO);
-
-    screen = SDL_SetVideoMode(1024, 768, 0, SDL_OPENGL|SDL_DOUBLEBUF);
-
+    screen = SDL_SetVideoMode(screen_x, screen_y, 0, SDL_OPENGL|SDL_DOUBLEBUF|SDL_RESIZABLE);
     SDL_WM_SetCaption("Simple Window", "Simple Window");
-
     atexit(SDL_Quit);
 
     for(;;) {
@@ -412,29 +459,17 @@ int main(void) {
                 return 0;
             }
 
+            if (event.type == SDL_VIDEORESIZE) {
+screen = SDL_SetVideoMode(event.resize.w,event.resize.h, 0, SDL_OPENGL|SDL_DOUBLEBUF|SDL_RESIZABLE);
+            glViewport(0,0,event.resize.w,event.resize.h);
+}
+
             if (event.type == SDL_MOUSEBUTTONDOWN) {
-                    do_game_move();
+                mouse_handler( event.button.x, event.button.y );
             }
 
-            if (event.type == SDL_KEYDOWN)
-            {
-                SDLKey keyPressed = event.key.keysym.sym;
-
-                switch (keyPressed)
-                {
-                case SDLK_ESCAPE:
-                    return 0;
-                case SDLK_LEFT:
-                    current_screen+=5;
-                    current_screen%=6;
-                    break;
-                case SDLK_RIGHT:
-                    current_screen++;
-                    current_screen%=6;
-                    break;
-                default:
-                    break;
-                }
+            if (event.type == SDL_KEYDOWN) {
+                keyboard_handler( event.key.keysym.sym );
             }
         }
         draw();

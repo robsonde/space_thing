@@ -2,6 +2,7 @@
 
 #define num_cargo_types 10
 #define num_planets 10
+#define fuel_cost 5
 
 
 struct location 
