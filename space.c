@@ -401,10 +401,11 @@ game_move%=6;
 
 
 int mouse_handler( int mouse_x, int mouse_y ) {
-(void)mouse_x;
-(void)mouse_y;
+size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
 if (mouse_y < (0.1 * screen_y))
-{ do_game_move();}
+{
+current_screen= num_items * mouse_x / screen_x;
+}
 return 0;
 }
 
@@ -427,6 +428,9 @@ int keyboard_handler( SDLKey keyPressed ) {
        case SDLK_RIGHT:
             current_screen++;
             current_screen%=6;
+            break;
+       case SDLK_UP:      
+            do_game_move();
             break;
        default:
             break;
@@ -462,6 +466,8 @@ int main(void) {
             if (event.type == SDL_VIDEORESIZE) {
 screen = SDL_SetVideoMode(event.resize.w,event.resize.h, 0, SDL_OPENGL|SDL_DOUBLEBUF|SDL_RESIZABLE);
             glViewport(0,0,event.resize.w,event.resize.h);
+            screen_x=event.resize.w;
+            screen_y=event.resize.h;
 }
 
             if (event.type == SDL_MOUSEBUTTONDOWN) {
