@@ -12,11 +12,15 @@
 #define NO_FUEL 4
 
 //set DEBUG to 1 for debuggin infomation
-#define DEBUG 0
+#define DEBUG 1
 
 SDL_Surface *screen;
 
 int current_screen = 0;
+
+//used for testing
+int game_move = 0;
+
 
 static FTGLfont *font;
 
@@ -99,9 +103,9 @@ void draw_status(void) {
 
     draw_background();
 
-    glPrintf(0.1,0.4,"Commander: %s",player.name);
-    glPrintf(0.1,0.5,"Location: %s",planets[player.place].name);
-    glPrintf(0.1,0.6,"Worth: %d",player.cash);
+    glPrintf(0.1,0.2,"Commander: %s",player.name);
+    glPrintf(0.1,0.3,"Location: %s",planets[player.place].name);
+    glPrintf(0.1,0.4,"Worth: %d",player.cash);
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -117,11 +121,8 @@ void draw_ship_info(void) {
     draw_background();
 
     glPrintf(0.1,0.2,"Ship Name: %s",ship.name);
-    for (int i=0; i<num_cargo_types; i++)
-    {
-        glPrintf(0.1,(0.3+(0.06*i)),"%s: %d",cargo_types[i].name,ship.cargo[i].avil);
-    }
-    glPrintf(0.1,(0.3+(0.06*num_cargo_types)),"Avil capacity: %d",ship.cap);
+    glPrintf(0.1,0.3,"Avil cargo capacity: %d",ship.cap);
+    glPrintf(0.1,0.4,"Range: %d",ship.fuel);
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -140,10 +141,6 @@ void draw_planet_info(void) {
 struct planet * p = &planets[player.place];
 
     glPrintf(0.1,0.2,"Name: %s",p->name);
-    for (int i=0; i<num_cargo_types; i++)
-    {
-        glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
-    }
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -159,6 +156,12 @@ void draw_buy_stuff(void) {
 
     draw_background();
 
+struct planet * p = &planets[player.place];
+for (int i=0; i<num_cargo_types; i++)
+    {
+       glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
+    }
+
 // update the screen buffer
     SDL_GL_SwapBuffers();
 
@@ -172,6 +175,13 @@ void draw_buy_stuff(void) {
 void draw_sell_stuff(void) {
 
     draw_background();
+
+struct planet * p = &planets[player.place];
+struct space_ship * s = player.ship;
+for (int i=0; i<num_cargo_types; i++)
+    {
+        glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,s->cargo[i].avil,p->cargo_types[i].price);
+    }
 
 // update the screen buffer
     SDL_GL_SwapBuffers();
@@ -255,12 +265,13 @@ int fly_to_planet( struct player * dude , int dest) {
 
     if ( distance > dude->ship->fuel ) {
         if (DEBUG) {
-            printf( "[DEBUG] no fuel to fly to %d\n", dest );
+            printf( "[DEBUG] no fuel to fly to %s\n", planets[dest].name );
         }
         return NO_FUEL;
     }
 
     dude->place=dest;
+    dude->ship->fuel-= distance;
     if (DEBUG) {
         printf ("[DEBUG] flying to:%s\n",planets[dest].name);
     }
@@ -327,7 +338,6 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
         return NOT_AVIL;
     }
 
-
     //all looks good so we do the trade.
     planet.cargo_types[cargo_index].avil += count;
     dude->cash += count*planet.cargo_types[cargo_index].price;
@@ -338,6 +348,47 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
     }
     return 0;
 }
+
+
+
+
+
+
+
+
+int do_game_move(void) {
+game_move++;
+game_move%=6;
+
+  switch (game_move){
+     case 0:
+        return 0;
+     case 1:
+        fly_to_planet(&player,1);
+        return 0;
+     case 2:
+        buy_cargo(&player,0,3);
+        return 0;
+     case 3:
+        fly_to_planet(&player,2);
+        return 0;
+     case 4:
+        sell_cargo(&player,0,3); 
+        return 0;
+     default:
+        return 0;
+}
+
+}
+
+
+
+
+
+
+
+
+
 
 
 
@@ -361,6 +412,9 @@ int main(void) {
                 return 0;
             }
 
+            if (event.type == SDL_MOUSEBUTTONDOWN) {
+                    do_game_move();
+            }
 
             if (event.type == SDL_KEYDOWN)
             {
@@ -383,15 +437,10 @@ int main(void) {
                 }
             }
         }
-
         draw();
     }
-
-
     return 0;
 }
-
-
 
 
 

@@ -83,14 +83,14 @@ struct planet planets[]= {
     {
         .name="foo",
         .notes="planet foo",
-        .cargo_types={ {.price=175,.avil=5} },
+        .cargo_types={ {.price=175,.avil=567} },
         .pos={.x=2,.y=2},
     },
 
     {
         .name="flarg",
         .notes="planet flarg",
-        .cargo_types={ {.price=125,.avil=0},{.price=100,.avil=1} },
+        .cargo_types={ {.price=125,.avil=450},{.price=100,.avil=1} },
         .pos={.x=7,.y=7},
     },
 
@@ -109,7 +109,7 @@ struct planet planets[]= {
 struct space_ship ship= {
     .name = "Dragon",
     .cap=14,
-    .fuel=3,
+    .fuel=300,
 };
 
 
