@@ -30,10 +30,12 @@ int screen_y = 768;
 static FTGLfont *font;
 
 typedef void draw_func(void);
+typedef void mouse_func(int x, int y);
 
 struct menu_item {
 	char const * label;
 	draw_func * draw;
+	mouse_func * mouse;
 };
 
 
@@ -45,16 +47,17 @@ void draw_sell_stuff(void);
 void draw_local_map(void);
 void draw_galaxy(void);
 
+void star_map_mouse_handler(int mouse_x, int mouse_y);
 
 //meun items
 static struct menu_item menu_items[] = {
-	{ "Status", draw_status },
-	{ "Ship Info", draw_ship_info },
-	{ "Planet Info", draw_planet_info },
-	{ "Buy Cargo", draw_buy_stuff },
-	{ "Sell Cargo", draw_sell_stuff },
-	{ "Local Map", draw_local_map },
-	{ "Galaxy", draw_galaxy }
+	{ "Status", draw_status, 0 },
+	{ "Ship Info", draw_ship_info, 0 },
+	{ "Planet Info", draw_planet_info, 0 },
+	{ "Buy Cargo", draw_buy_stuff, 0 },
+	{ "Sell Cargo", draw_sell_stuff, 0 },
+	{ "Local Map", draw_local_map, star_map_mouse_handler },
+	{ "Galaxy", draw_galaxy, 0 }
 };
 
 
@@ -265,31 +268,16 @@ void draw(void) {
 
 
 
-//prints a given planet.
-void print_planet (struct planet * p)
-{
-    printf("%s\n","planet stats");
-    printf("  %s\n",p->name);
-    for (int i=0; i<num_cargo_types; i++)
-    {
-        printf("  %s:%d:price:%d\n",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
-    }
-    printf("\n");
-}
-
-
-
-
 
 
 
 int which_planet_is_closer(int mouse_x, int mouse_y) {
-int current_closest_planet=9999;
-float current_closest_distance=9999;
-struct planet planet = planets[player.place];
-int cen_x=planet.pos.x;
-int cen_y=planet.pos.y;
-float aspect = (float)screen_x/(float)screen_y;
+ int current_closest_planet=9999;
+ float current_closest_distance=9999;
+ struct planet planet = planets[player.place];
+ int cen_x=planet.pos.x;
+ int cen_y=planet.pos.y;
+ float aspect = (float)screen_x/(float)screen_y;
  
         printf ("[DEBUG] mouse x: %d\n",mouse_x);
         printf ("[DEBUG] mouse y: %d\n",mouse_y);
@@ -311,7 +299,6 @@ float aspect = (float)screen_x/(float)screen_y;
         printf ("[DEBUG] closest planet: %d\n",current_closest_planet);
         printf ("[DEBUG] closest distance: %f\n",current_closest_distance);
     }
-
 return current_closest_planet;
 }
 
@@ -439,9 +426,6 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
 
 
 
-
-
-
 struct planet planets[num_planets];
 
 void set_up_planets(void) {
@@ -456,9 +440,7 @@ void set_up_planets(void) {
             planets[i].cargo_types[c].avil=rand()%100;
             planets[i].cargo_types[c].price=cargo_types[c].base_price + cargo_types[c].base_price * (rand()%skill/100.0f);
         }
-
     }
-
 }
 
 
@@ -468,19 +450,10 @@ void set_up_planets(void) {
 
 
 
-int do_game_move(void) {
-        buy_fuel(&player,6);
-  return 0;
-}
 
 
 
-
-
-
-
-
-int mouse_handler( int mouse_x, int mouse_y ) {
+void mouse_handler( int mouse_x, int mouse_y ) {
     size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
     if (mouse_y < (0.1 * screen_y)) //are we in menu bar?
     {
@@ -488,17 +461,19 @@ int mouse_handler( int mouse_x, int mouse_y ) {
     }
     else //we are in main screen.
     { 
-    if (current_screen == 5) //star map
-       {
-        int fly_to_where=which_planet_is_closer(mouse_x,mouse_y);
-        fly_to_planet(&player,fly_to_where);
-       }
+	mouse_func * mouse = menu_items[current_screen].mouse;
+	if (mouse)
+	   mouse(mouse_x, mouse_y);
     }
-    return 0;
 }
 
 
 
+
+void star_map_mouse_handler(int mouse_x, int mouse_y) {
+        int fly_to_where=which_planet_is_closer(mouse_x,mouse_y);
+        fly_to_planet(&player,fly_to_where);
+}
 
 
 
@@ -518,7 +493,7 @@ int keyboard_handler( SDLKey keyPressed ) {
         current_screen%=6;
         break;
     case SDLK_UP:
-        do_game_move();
+        buy_fuel(&player,6);
         break;
     default:
         break;
@@ -537,9 +512,7 @@ int keyboard_handler( SDLKey keyPressed ) {
 
 int main(void) {
 
-
     set_up_planets();
-
 
     /* Create a pixmap font from a TrueType file. */
     font = ftglCreatePixmapFont("FreeSans.ttf");
@@ -574,8 +547,5 @@ int main(void) {
     }
     return 0;
 }
-
-
-
 
 
