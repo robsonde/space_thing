@@ -294,6 +294,48 @@ void print_planet (struct planet * p)
 
 
 
+
+
+int which_planet_is_closer(int mouse_x, int mouse_y) {
+int current_closest_planet=9999;
+float current_closest_distance=9999;
+struct planet planet = planets[player.place];
+int cen_x=planet.pos.x;
+int cen_y=planet.pos.y;
+float aspect = (float)screen_x/(float)screen_y;
+ 
+        printf ("[DEBUG] mouse x: %d\n",mouse_x);
+        printf ("[DEBUG] mouse y: %d\n",mouse_y);
+  
+    for (int i=0; i<num_planets; i++) {
+
+    float planet_x = 0.5 +( planets[i].pos.x - cen_x)/40.0f/aspect;
+    float planet_y = 0.5 +( planets[i].pos.y - cen_y)/40.0f;
+    float dx = planet_x - mouse_x/(float)screen_x;
+    float dy = planet_y - mouse_y/(float)screen_y;
+    float distance = hypot(dx,dy);//distance for given planet
+    if (  distance < current_closest_distance ) {
+        current_closest_distance = distance;
+        current_closest_planet = i;
+       }
+    }
+
+    if ( DEBUG ) {
+        printf ("[DEBUG] closest planet: %d\n",current_closest_planet);
+        printf ("[DEBUG] closest distance: %f\n",current_closest_distance);
+    }
+
+return current_closest_planet;
+}
+
+
+
+
+
+
+
+
+
 //function to fly to another planet.
 int fly_to_planet( struct player * dude , int dest) {
 
@@ -474,9 +516,17 @@ int do_game_move(void) {
 
 int mouse_handler( int mouse_x, int mouse_y ) {
     size_t num_items= sizeof(menu_items)/sizeof(*menu_items);
-    if (mouse_y < (0.1 * screen_y))
+    if (mouse_y < (0.1 * screen_y)) //are we in menu bar?
     {
         current_screen= num_items * mouse_x / screen_x;
+    }
+    else //we are in main screen.
+    { 
+    if (current_screen == 5) //star map
+       {
+        int fly_to_where=which_planet_is_closer(mouse_x,mouse_y);
+        fly_to_planet(&player,fly_to_where);
+       }
     }
     return 0;
 }
