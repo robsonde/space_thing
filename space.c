@@ -480,17 +480,13 @@ void star_map_mouse_handler(int mouse_x, int mouse_y) {
 void buy_stuff_mouse_handler(int mouse_x, int mouse_y) {
 float location_y = (float)mouse_y / screen_y;
 float location_x = mouse_x / screen_x;
-int selected_item = (location_y - 0.3f) / 0.6f *10;
+int selected_item = (location_y - 0.25f) / 0.55f *10;
 
-	location_x=location_x;
+location_x=location_x;
     
     if ( DEBUG ) {
-        printf ("[DEBUG] mouse_y:%d\n",mouse_y);
-        printf ("[DEBUG] screen_y:%d\n",screen_y);
-        printf ("[DEBUG] location_y:%f\n",location_y);
         printf ("[DEBUG] selected Item:%d\n",selected_item);
     }
-
 }
 
 
