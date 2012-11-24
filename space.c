@@ -48,13 +48,15 @@ void draw_local_map(void);
 void draw_galaxy(void);
 
 void star_map_mouse_handler(int mouse_x, int mouse_y);
+void buy_stuff_mouse_handler(int mouse_x, int mouse_y);
+
 
 //meun items
 static struct menu_item menu_items[] = {
 	{ "Status", draw_status, 0 },
 	{ "Ship Info", draw_ship_info, 0 },
 	{ "Planet Info", draw_planet_info, 0 },
-	{ "Buy Cargo", draw_buy_stuff, 0 },
+	{ "Buy Cargo", draw_buy_stuff, buy_stuff_mouse_handler },
 	{ "Sell Cargo", draw_sell_stuff, 0 },
 	{ "Local Map", draw_local_map, star_map_mouse_handler },
 	{ "Galaxy", draw_galaxy, 0 }
@@ -139,7 +141,7 @@ void draw_background(void) {
         else
             glColor4f(1,1,1,1);
 
-        glPrintf(0.009+(item*spacing),0.09,"%s",menu_items[item]);
+        glPrintf(0.009+(item*spacing),0.09,"%s",menu_items[item].label);
     }
 
 }
@@ -476,6 +478,17 @@ void star_map_mouse_handler(int mouse_x, int mouse_y) {
 }
 
 
+void buy_stuff_mouse_handler(int mouse_x, int mouse_y) {
+        int fly_to_where=which_planet_is_closer(mouse_x,mouse_y);
+        fly_to_planet(&player,fly_to_where);
+}
+
+
+
+
+
+
+
 
 
 
@@ -500,10 +513,6 @@ int keyboard_handler( SDLKey keyPressed ) {
     }
     return 0;
 }
-
-
-
-
 
 
 
