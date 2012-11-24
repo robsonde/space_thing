@@ -29,8 +29,32 @@ int screen_y = 768;
 
 static FTGLfont *font;
 
-static char const* menu_items[]= {
-    "Status","Ship Info","Planet Info","Buy Cargo","Sell Cargo","Star Map"
+typedef void draw_func(void);
+
+struct menu_item {
+	char const * label;
+	draw_func * draw;
+};
+
+
+void draw_status(void);
+void draw_ship_info(void);
+void draw_planet_info(void);
+void draw_buy_stuff(void);
+void draw_sell_stuff(void);
+void draw_local_map(void);
+void draw_galaxy(void);
+
+
+//meun items
+static struct menu_item menu_items[] = {
+	{ "Status", draw_status },
+	{ "Ship Info", draw_ship_info },
+	{ "Planet Info", draw_planet_info },
+	{ "Buy Cargo", draw_buy_stuff },
+	{ "Sell Cargo", draw_sell_stuff },
+	{ "Local Map", draw_local_map },
+	{ "Galaxy", draw_galaxy }
 };
 
 
@@ -54,7 +78,7 @@ void glPrintf(float x,float y, char const * fmt, ...) {
 
 
 void draw_circle( float x,float y,float rad) {
-    int steps=32;
+    int steps=64;
     float step = 2*M_PI/steps;
     float aspect = (float)screen_x/(float)screen_y;
 
@@ -112,7 +136,7 @@ void draw_background(void) {
         else
             glColor4f(1,1,1,1);
 
-        glPrintf(0.01+(item*spacing),0.09,"%s",menu_items[item]);
+        glPrintf(0.009+(item*spacing),0.09,"%s",menu_items[item]);
     }
 
 }
@@ -121,16 +145,9 @@ void draw_background(void) {
 
 
 void draw_status(void) {
-
-    draw_background();
-
     glPrintf(0.1,0.2,"Commander: %s",player.name);
     glPrintf(0.1,0.3,"Location: %s",planets[player.place].name);
     glPrintf(0.1,0.4,"Worth: %d",player.cash);
-
-// update the screen buffer
-    SDL_GL_SwapBuffers();
-
 }
 
 
@@ -138,16 +155,9 @@ void draw_status(void) {
 
 
 void draw_ship_info(void) {
-
-    draw_background();
-
     glPrintf(0.1,0.2,"Ship Name: %s",ship.name);
     glPrintf(0.1,0.3,"Avil cargo capacity: %d",ship.cap);
     glPrintf(0.1,0.4,"Range: %d",ship.fuel);
-
-// update the screen buffer
-    SDL_GL_SwapBuffers();
-
 }
 
 
@@ -156,15 +166,8 @@ void draw_ship_info(void) {
 
 
 void draw_planet_info(void) {
-
-    draw_background();
-
     struct planet * p = &planets[player.place];
-
     glPrintf(0.1,0.2,"Name: %s",p->name);
-
-// update the screen buffer
-    SDL_GL_SwapBuffers();
 
 }
 
@@ -174,17 +177,11 @@ void draw_planet_info(void) {
 
 
 void draw_buy_stuff(void) {
-
-    draw_background();
-
     struct planet * p = &planets[player.place];
     for (int i=0; i<num_cargo_types; i++)
     {
         glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
     }
-
-// update the screen buffer
-    SDL_GL_SwapBuffers();
 
 }
 
@@ -195,18 +192,12 @@ void draw_buy_stuff(void) {
 
 void draw_sell_stuff(void) {
 
-    draw_background();
-
     struct planet * p = &planets[player.place];
     struct space_ship * s = player.ship;
     for (int i=0; i<num_cargo_types; i++)
     {
         glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,s->cargo[i].avil,p->cargo_types[i].price);
     }
-
-// update the screen buffer
-    SDL_GL_SwapBuffers();
-
 }
 
 
@@ -218,31 +209,46 @@ void draw_local_map(void) {
     int cen_x=planet.pos.x;
     int cen_y=planet.pos.y;
     float aspect = (float)screen_x/(float)screen_y;
-
-    draw_background();
-
 //draw the line which shows fuel range.
     draw_circle(0.5,0.5,range);
-
 //draw the local planets.
     for (int i=0; i<num_planets; i++) {
-
         float planet_x = 0.5 +( planets[i].pos.x - cen_x)/40.0f/aspect;
         float planet_y = 0.5 +( planets[i].pos.y - cen_y)/40.0f;
-
         if ( planets[i].visited == 0)
             glColor4f(0,1,0,1);
         else
             glColor4f(0,0,1,1);
-
         draw_circle(planet_x,planet_y,0.002);
     }
-
-// update the screen buffer
-    SDL_GL_SwapBuffers();
-
 }
 
+
+
+
+
+
+
+void draw_galaxy(void) {
+    float range=(float)ship.fuel/140;
+    struct planet planet = planets[player.place];
+    int cen_x=0;
+    int cen_y=0;
+    float aspect = (float)screen_x/(float)screen_y;
+//draw the line which shows fuel range.
+    draw_circle(0.5+(planet.pos.x/140.0f/aspect),0.5+(planet.pos.y/140.0f),range);
+
+//draw the local planets.
+    for (int i=0; i<num_planets; i++) {
+        float planet_x = 0.5 +( planets[i].pos.x - cen_x)/140.0f/aspect;
+        float planet_y = 0.5 +( planets[i].pos.y - cen_y)/140.0f;
+        if ( planets[i].visited == 0)
+            glColor4f(0,1,0,1);
+        else
+            glColor4f(0,0,1,1);
+        draw_circle(planet_x,planet_y,0.002);
+    }
+}
 
 
 
@@ -250,29 +256,10 @@ void draw_local_map(void) {
 
 
 void draw(void) {
-    if ( current_screen == 0 ) {
-        draw_status();
-    }
-    if ( current_screen == 1 ) {
-        draw_ship_info();
-    }
-    if ( current_screen == 2 ) {
-        draw_planet_info();
-    }
-    if ( current_screen == 3 ) {
-        draw_buy_stuff();
-    }
-    if ( current_screen == 4 ) {
-        draw_sell_stuff();
-    }
-    if ( current_screen == 5 ) {
-        draw_local_map();
-    }
+ draw_background();
+   menu_items[current_screen].draw();
+ SDL_GL_SwapBuffers();
 }
-
-
-
-
 
 
 
@@ -482,29 +469,8 @@ void set_up_planets(void) {
 
 
 int do_game_move(void) {
-    game_move++;
-    game_move%=6;
-
-    switch (game_move) {
-    case 0:
         buy_fuel(&player,6);
-        return 0;
-    case 1:
-        fly_to_planet(&player,1);
-        return 0;
-    case 2:
-        buy_cargo(&player,0,3);
-        return 0;
-    case 3:
-        fly_to_planet(&player,2);
-        return 0;
-    case 4:
-        sell_cargo(&player,0,3);
-        return 0;
-    default:
-        return 0;
-    }
-
+  return 0;
 }
 
 

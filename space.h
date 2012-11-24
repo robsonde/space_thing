@@ -1,7 +1,7 @@
 #pragma once
 
 #define num_cargo_types 10
-#define num_planets 30
+#define num_planets 300
 #define fuel_cost 5
 
 
