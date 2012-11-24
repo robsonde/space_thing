@@ -7,9 +7,12 @@ from where we are now to where to want to go.
 checks fuel, moves to new location.
 ********DONE***************
 
+
+********DONE***************
 2.  basic menu type system to make testing a bit more like playing the game.
 just options in a text input, buy, sell, move to planet
 like a phone menu, 1 for fly to planet, 2 for buy, 3 for sell, etc 
+********DONE***************
 
 
 3.  planet description generator.
@@ -17,13 +20,15 @@ random description generator, 20+ base sentances, list of nouns and verbs.
 creates about 4 some what random phrases that describe the planet.
 
 
+
 4.  planet location code.
 setup planets at random locations. think it will just be a 2D x,y system.
 then we can calculate fuel required and used.
 
 
+
 5.  add fuel as a thing you can buy.
-fuel is something you buy but not a like carga, more like a ship upgrade.
+fuel is something you buy but not a like cargo, more like a ship upgrade.
 a given ship type can only hold so much fuel. 
 
 

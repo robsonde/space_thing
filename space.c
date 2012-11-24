@@ -49,6 +49,7 @@ void draw_galaxy(void);
 
 void star_map_mouse_handler(int mouse_x, int mouse_y);
 void buy_stuff_mouse_handler(int mouse_x, int mouse_y);
+void sell_stuff_mouse_handler(int mouse_x, int mouse_y);
 
 
 //meun items
@@ -57,7 +58,7 @@ static struct menu_item menu_items[] = {
 	{ "Ship Info", draw_ship_info, 0 },
 	{ "Planet Info", draw_planet_info, 0 },
 	{ "Buy Cargo", draw_buy_stuff, buy_stuff_mouse_handler },
-	{ "Sell Cargo", draw_sell_stuff, 0 },
+	{ "Sell Cargo", draw_sell_stuff, sell_stuff_mouse_handler },
 	{ "Local Map", draw_local_map, star_map_mouse_handler },
 	{ "Galaxy", draw_galaxy, 0 }
 };
@@ -487,9 +488,26 @@ location_x=location_x;
     if ( DEBUG ) {
         printf ("[DEBUG] selected Item:%d\n",selected_item);
     }
+if ((selected_item <= 10)&&(selected_item >= 0)){buy_cargo(&player,selected_item,1);}
 }
 
 
+
+
+
+
+void sell_stuff_mouse_handler(int mouse_x, int mouse_y) {
+float location_y = (float)mouse_y / screen_y;
+float location_x = mouse_x / screen_x;
+int selected_item = (location_y - 0.25f) / 0.55f *10;
+
+location_x=location_x;
+    
+    if ( DEBUG ) {
+        printf ("[DEBUG] selected Item:%d\n",selected_item);
+    }
+if ((selected_item <= 10)&&(selected_item >= 0)){sell_cargo(&player,selected_item,1);}
+}
 
 
 
