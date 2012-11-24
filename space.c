@@ -92,7 +92,6 @@ void draw_circle( float x,float y,float rad) {
         glVertex2f(x+(rad*cosf(i*step)/aspect),y+rad*sinf(i*step));
     }
     glEnd();
-
 }
 
 
@@ -143,7 +142,6 @@ void draw_background(void) {
 
         glPrintf(0.009+(item*spacing),0.09,"%s",menu_items[item].label);
     }
-
 }
 
 
@@ -173,7 +171,6 @@ void draw_ship_info(void) {
 void draw_planet_info(void) {
     struct planet * p = &planets[player.place];
     glPrintf(0.1,0.2,"Name: %s",p->name);
-
 }
 
 
@@ -187,7 +184,6 @@ void draw_buy_stuff(void) {
     {
         glPrintf(0.1,0.3+(0.06*i),"%s:%d:price:%d",cargo_types[i].name,p->cargo_types[i].avil,p->cargo_types[i].price);
     }
-
 }
 
 
@@ -196,7 +192,6 @@ void draw_buy_stuff(void) {
 
 
 void draw_sell_stuff(void) {
-
     struct planet * p = &planets[player.place];
     struct space_ship * s = player.ship;
     for (int i=0; i<num_cargo_types; i++)
@@ -478,9 +473,24 @@ void star_map_mouse_handler(int mouse_x, int mouse_y) {
 }
 
 
+
+
+
+
 void buy_stuff_mouse_handler(int mouse_x, int mouse_y) {
-        int fly_to_where=which_planet_is_closer(mouse_x,mouse_y);
-        fly_to_planet(&player,fly_to_where);
+float location_y = (float)mouse_y / screen_y;
+float location_x = mouse_x / screen_x;
+int selected_item = (location_y - 0.3f) / 0.6f *10;
+
+	location_x=location_x;
+    
+    if ( DEBUG ) {
+        printf ("[DEBUG] mouse_y:%d\n",mouse_y);
+        printf ("[DEBUG] screen_y:%d\n",screen_y);
+        printf ("[DEBUG] location_y:%f\n",location_y);
+        printf ("[DEBUG] selected Item:%d\n",selected_item);
+    }
+
 }
 
 
