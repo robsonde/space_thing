@@ -424,19 +424,46 @@ int sell_cargo ( struct player * dude, int cargo_index, int count  ) {
 
 
 
+
+
+
+
+
+
+
+
+
 struct planet planets[num_planets];
 
-void set_up_planets(void) {
 
-    for (int i=0; i<num_planets; i++) {
+
+void set_up_planets(void) {
+char * points = calloc(40000,1);
+int pos_x;
+int pos_y;
+
+   for (int i=0; i<num_planets; i++) {
+        
+        if ( DEBUG ) {
+             printf ("[DEBUG] make planet");
+        }
+
+        char colided=1;
+        while (colided==1) {
+        pos_x=50-rand()%100;
+        pos_y=50-rand()%100;
+        colided = points[50+pos_x+((50+pos_y)*200)];
+        }
+
+        points[50+pos_x+((50+pos_y)*200)]=1;
         planets[i].name="aa";
         planets[i].notes="aaa";
         planets[i].visited=0;
-        planets[i].pos.x=50-rand()%100;
-        planets[i].pos.y=50-rand()%100;
+        planets[i].pos.x=pos_x;
+        planets[i].pos.y=pos_y;
         for (int c=0; c<num_cargo_types; c++) {
-            planets[i].cargo_types[c].avil=rand()%100;
-            planets[i].cargo_types[c].price=cargo_types[c].base_price + cargo_types[c].base_price * (rand()%skill/100.0f);
+         planets[i].cargo_types[c].avil=rand()%100;
+         planets[i].cargo_types[c].price=cargo_types[c].base_price + cargo_types[c].base_price * (rand()%skill/100.0f);
         }
     }
 }
