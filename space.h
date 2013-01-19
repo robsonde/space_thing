@@ -48,6 +48,7 @@ int cap;
 struct econ cargo [num_cargo_types];
 int num_cargo;
 int fuel;
+int fuel_capacity;
 };
 
 

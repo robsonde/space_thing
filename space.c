@@ -342,6 +342,15 @@ int fly_to_planet( struct player * dude , int dest) {
 
 
 int buy_fuel( struct player * dude , int quanity) {
+    int cost=quanity * fuel_cost;
+
+    if ( cost > dude->cash ){ 
+       return NO_CASH;
+    }
+    if ( dude->ship->fuel + quanity > dude->ship->fuel_capacity ){
+       return NO_SPACE;
+    }
+
     dude->ship->fuel += quanity;
     dude->cash -= quanity * fuel_cost;
     return 0;
@@ -445,7 +454,7 @@ int pos_y;
    for (int i=0; i<num_planets; i++) {
         
         if ( DEBUG ) {
-             printf ("[DEBUG] make planet");
+             printf ("[DEBUG] make planet\n");
         }
 
         char colided=1;

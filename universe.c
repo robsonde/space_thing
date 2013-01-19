@@ -72,6 +72,7 @@ struct space_ship ship= {
     .name = "Dragon",
     .cap=14,
     .fuel=14,
+    .fuel_capacity=20,
 };
 
 
